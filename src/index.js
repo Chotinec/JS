@@ -12,6 +12,7 @@
  */
 function createDivWithText(text) {
   var div = document.createElement('div');
+
   div.textContent = text;
 
   return div;
@@ -27,6 +28,7 @@ function createDivWithText(text) {
  */
 function prepend(what, where) {
   var firstChild = where.firstChild;
+
   where.insertBefore(what, firstChild);
 }
 
@@ -52,8 +54,10 @@ function prepend(what, where) {
 function findAllPSiblings(where) {
   var result = [];
   var children = where.childNodes;
+
   for (let i = 0; i < children.length; i++) {
     var sibling = children[i].nextElementSibling;
+
     if (sibling != null && sibling.tagName == 'P') {
       result.push(children[i]);
     }
@@ -85,7 +89,7 @@ function findError(where) {
   for (var child of where.childNodes) {
     if (child.nodeType === 1) {
       result.push(child.innerText);
-     }
+    }
   }
 
   return result;
@@ -123,15 +127,13 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
-  console.log(where);
-  var children = where.childNodes;
-  console.log(children);
-  console.log(children.length);
-  for (let i = 0; i < children; i++) {
-    if (children[i] === 3) {
-      where.removeChild(children[i]);
-    } else {
-      eleteTextNodesRecursive(children[i]);
+  var ch = Array.from(where.childNodes);
+
+  for (var i = 0; i < ch.length; i++) {
+    if (ch[i].nodeType === 1) {
+      deleteTextNodesRecursive(ch[i]);
+    } else if (ch[i].nodeType === 3) {
+      where.removeChild(ch[i]);
     }
   }
 }
@@ -157,6 +159,30 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+  var result = {
+    tags: {},
+    classes: {},
+    texts: 0
+  };
+  
+  function collectDOMInfo(root) {
+    var ch = Array.from(root.childNodes);
+
+    for (var el of ch) {
+      if (el.nodeType === 1) {
+        result.tags[el.nodeName] = result.tags.hasOwnProperty(el.nodeName) ? result.tags[el.nodeName] + 1 : 1;
+        for (let class_ of el.classList) {
+          result.classes[class_] = result.classes.hasOwnProperty(class_) ? result.classes[class_] + 1 : 1;
+        }
+        collectDOMInfo(el);
+      } else if (el.nodeType === 3) {
+        result.texts++;
+      }
+    }
+  }
+  collectDOMInfo(root);
+
+  return result;
 }
 
 /*
@@ -192,15 +218,32 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
+  // console.log(where);
+
+  // const callback = function(mutationsList, observer) {
+  //   console.log(mutationsList)
+  // };
+
+  // var observer = new MutationObserver(callback);
+
+  // observer.observe(where, {
+  //   characterData: false,
+  //   attributes: false,
+  //   childList: true,
+  //   subtree: true,
+  //   addedNodes: true,
+  //   removedNodes: true,
+  //   type: true
+  // });
 }
 
 export {
-    createDivWithText,
-    prepend,
-    findAllPSiblings,
-    findError,
-    deleteTextNodes,
-    deleteTextNodesRecursive,
-    collectDOMStat,
-    observeChildNodes
+  createDivWithText,
+  prepend,
+  findAllPSiblings,
+  findError,
+  deleteTextNodes,
+  deleteTextNodesRecursive,
+  collectDOMStat,
+  observeChildNodes
 };
