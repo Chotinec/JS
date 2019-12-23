@@ -15,7 +15,8 @@
    const newDiv = document.createElement('div');
    homeworkContainer.appendChild(newDiv);
  */
-const homeworkContainer = document.querySelector('#homework-container');
+const homeworkContainer = document.querySelector('#homeworkContainer');
+console.log(homeworkContainer)
 
 /*
  Функция должна создавать и возвращать новый div с классом draggable-div и случайными размерами/цветом/позицией
@@ -48,7 +49,7 @@ function createDiv() {
   div.classList.add("draggable-div");
   div.style.cssText = `position: absolute;
                        width: ${randomWidth}px;
-                       heigt: ${randomHeight}px;
+                       height: ${randomHeight}px;
                        background-color: ${randomColor};
                        top: ${randomTop}px;
                        left: ${randomLeft}px`;
@@ -86,11 +87,12 @@ function addListeners(target) {
   };
 }
 
-let addDivButton = homeworkContainer.querySelector('#addDiv');
+let addDivButton = document.querySelector('#addDiv');
 
 addDivButton.addEventListener('click', function() {
     // создать новый div
     const div = createDiv();
+    console.log(div)
 
     // добавить на страницу
     homeworkContainer.appendChild(div);
@@ -100,6 +102,6 @@ addDivButton.addEventListener('click', function() {
     // или использовать HTML5 D&D - https://www.html5rocks.com/ru/tutorials/dnd/basics/
 });
 
-export {
-  createDiv
-};
+// export {
+//   createDiv
+// };
