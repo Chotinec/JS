@@ -37,16 +37,28 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     loadingBlock.innerText = 'Загрузка...'
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
-    xhr.send();
-    xhr.addEventListener('load', () => {
-      var cities = JSON.parse(xhr.response);
-      
-      resolve(cities.sort(compare));
-    })
+
+    fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/citie.json')
+      .then(response => response.json())
+      .then(cities => {
+        resolve(cities.sort(compare))
+      })
+      .catch(() => {
+        loadingBlock.innerText = ''
+        filterResult.innerText = 'Не удалось загрузить города';
+
+        let button = document.createElement('button');
+
+        button.innerText = 'Повторить';
+        button.addEventListener('click', () => {
+          filterBlock.removeChild(button);
+          filterInput.dispatchEvent(new Event('keyup'));
+        })
+        
+        filterBlock.appendChild(button);
+      })
 
     function compare(a, b) {
       if (a.name > b.name) return 1;
@@ -90,11 +102,14 @@ const filterResult = homeworkContainer.querySelector('#filter-result');
 filterInput.addEventListener('keyup', function(e) {
     // это обработчик нажатия кливиш в текстовом поле
     loadTowns().then(cities => {
+      filterResult.innerHTML = '';
+      loadingBlock.innerText = '';
       cities.forEach(city => {
-        if (isMatching((city.name, fe.target.value))) {
+        console.log(e.target.value)
+        if (isMatching(city.name, e.target.value)) {
           let item = document.createElement('div');
 
-          div.innerText = city.name;
+          item.innerText = city.name;
           filterResult.appendChild(item);
         }
       })
