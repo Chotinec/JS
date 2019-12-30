@@ -40,7 +40,7 @@ function loadTowns() {
   return new Promise((resolve) => {
     loadingBlock.innerText = 'Загрузка...'
 
-    fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/citie.json')
+    fetch('https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json')
       .then(response => response.json())
       .then(cities => {
         resolve(cities.sort(compare))
@@ -80,14 +80,7 @@ function loadTowns() {
    isMatching('Moscow', 'Moscov') // false
  */
 function isMatching(full, chunk) {
-  let fullOnLowCase = full.toLowerCase();
-  let chunkOnLowerCase = chunk.toLowerCase();
-
-  if (fullOnLowCase === chunkOnLowerCase || fullOnLowCase.includes(chunkOnLowerCase)) {
-    return true;
-  }
-
-  return false;
+  return chunk ? full.toLowerCase().includes(chunk.toLowerCase()) : false;
 }
 
 /* Блок с надписью "Загрузка" */
@@ -101,12 +94,13 @@ const filterResult = homeworkContainer.querySelector('#filter-result');
 
 filterInput.addEventListener('keyup', function(e) {
     // это обработчик нажатия кливиш в текстовом поле
+    let target = e.target.value;
+
     loadTowns().then(cities => {
       filterResult.innerHTML = '';
       loadingBlock.innerText = '';
       cities.forEach(city => {
-        console.log(e.target.value)
-        if (isMatching(city.name, e.target.value)) {
+        if (isMatching(city.name, target)) {
           let item = document.createElement('div');
 
           item.innerText = city.name;
